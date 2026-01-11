@@ -468,9 +468,9 @@ The situation with JavaScript running in the backend is different. The newest ve
 --Putting front into backend simple: first in frontend fetch service change url to relative, then npm run build to generate a dist folder with frontend production code, then copy this to backend folder  
  then app.use(express.static('dist')) in backend  
 --connecting to database:  
- (log in to account: f... Mangodb)  
- add url (mongodb+srv://thomastoumasu:pw@cluster0.hmhtqmw.mongodb.net/phonebook?retryWrites=true&w=majority&appName=Cluster0) in .env (dev mode) or in render  
- in ./models/person.js connect, create schema and model, overwrite toJSON, export model  
+ (log in to account: f... Mangodb)
+
+in ./models/person.js connect, create schema and model, overwrite toJSON, export model  
 If you're having issues with content.body being undefined for seemingly no reason, make sure you didn't forget to add app.use(express.json()) near the top of the file.  
 note backend: https://github.com/fullstack-hy2020/part3-notes-backend
 
