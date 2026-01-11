@@ -101,6 +101,7 @@ kubectl exec -it my-busybox -- nslookup postgres-svc
 
 ## shell
 
+https://regex101.com/  
 https://tkt-lapio.github.io/command-line/  
 https://www.shellscript.sh  
 The shell parses the arguments BEFORE passing them on to the program being called, so quote if variable can be empty or contain a whitespace (because then that would be two arguments):
@@ -109,6 +110,24 @@ The shell parses the arguments BEFORE passing them on to the program being calle
 a=3 $a  b=$(curl bla)
 read USER_NAME
 touch "${USER_NAME}\_file"
+
+NOW=$(date +'%Y-%m-%dT%H-%M-%S')
+echo "FILENAME="./the_database/todos-${NOW}.bson""
+
+case $EVENT in
+  main)
+    echo "NAMESPACE="staging""
+    echo "SITE="www.thomastoumasu.xx.kg""
+    ;;
+  *)
+    echo "NAMESPACE="production""
+    echo "SITE="www.thomastoumasu.dpdns.org""
+    ;;
+esac
+
+for i in {1..100}; do sleep 1; if nslookup myservice; then exit 0; fi; done; exit 1
+
+sh -c 'for i in $(seq 122 -7 1); do echo "will update in $(( i / 60 )) min $(( i % 60 )) s"; done'
 ```
 
 MYVAR=hello  
@@ -132,6 +151,12 @@ to save the script input:
 script -r bla.txt  
 exit  
 script -p bla.txt
+
+```bat
+sh -c 'NUMBER_OF_SECONDS=$(( ($RANDOM % 600) + 300 )); for i in $(seq $NUMBER_OF_SECONDS -7 1); do echo "will update in $(( i / 60 )) min $(( i % 60 )) s"; done; curl -o /work-dir/index.html https://en.wikipedia.org/wiki/Hanna_Kulenty'
+```
+
+command: ['sh', '-c', "until nslookup mydb.$(cat /var/run/secrets/kubernetes.io/serviceaccount/namespace).svc.cluster.local; do echo waiting for mydb; sleep 2; done"]
 
 ```bat
 set -e # exit immediately if a command exits with a non-zero status
