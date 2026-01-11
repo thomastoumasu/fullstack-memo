@@ -216,7 +216,7 @@ fi
 
 remember bind mount  
 remember structure reverse proxy with nginx (local folder part12-containers-applications from https://fullstackopen.com/en/part12/basics_of_orchestration#communications-between-containers-in-a-more-ambitious-environment and same in local folder container-application-main from https://courses.mooc.fi/org/uh-cs/courses/devops-with-docker/chapter-3/volumes-in-action)  
-<img src="./reverse_proxy.png" alt="nginx reverse proxy" style="height:600px; width:500px;"/>  
+<img src="./pics/reverse_proxy.png" alt="nginx reverse proxy" style="height:600px; width:500px;"/>  
 do not forget to run container with -it if want to interact with it (like using sh read)  
 when using -v with a single file be sure it exists in the host, otherwise it will try to create a folder
 
@@ -488,7 +488,7 @@ testing backend: use supertest to test the API. check minBackendwTests, check bl
 --intuition: test emulates frontend requests to the backend and checks:  
 -responses (status, content, some header)  
 -changes in database  
-<img src="./test.jpg" alt="intuition test" style="height:300px; width:300px;"/>
+<img src="./pics/test.jpg" alt="intuition test" style="height:300px; width:300px;"/>
 --npm run test with test: node --test  
  then in write tests in tests/bla.test.js: const { test } = require('node:test')  
 --Use supertest (as a dev dependency) to test separated app:  
