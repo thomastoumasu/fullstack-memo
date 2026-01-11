@@ -1,5 +1,6 @@
 [container](#container)  
-[shell](#shell)
+[shell](#shell)  
+[js](#javascript)
 
 https://docs.github.com/de/get-started/writing-on-github/getting-started-with-writing-and-formatting-on-github/basic-writing-and-formatting-syntax#section-links  
 https://www.markdownguide.org/extended-syntax/#highlight
@@ -344,7 +345,9 @@ npm-debug.log
 .npmrc  
 .DS_Store
 
-## javascript: basics
+## javascript
+
+### basics
 
 https://medium.com/@robinviktorsson/setting-up-eslint-and-prettier-for-a-typescript-project-aa2434417b8f  
 "editor.formatOnPaste": true  
@@ -392,7 +395,7 @@ install may install a different version of a dependency if you have ^ or ~ in th
 ci will delete the node_modules folder before installing anything  
 ci will follow the package-lock.json and does not alter any files
 
-## 0.
+### [course](https://fullstackopen.com/en/) 0.
 
 In traditional web applications, the browser is "dumb". It only fetches HTML data from the server, and all application logic is on the server.  
 A server can be created using Java Spring, Python Flask or Ruby on Rails to name just a few examples.  
@@ -401,7 +404,7 @@ This course will use Node.js and Express to create web servers. Node.js is a cro
 curl https://studies.cs.helsinki.fi/exampleapp/new_note -d "note=AV USigma" --ssl-no-revoke  
 curl -X POST -H "Content-Type: application/json" -d '{"id":"4","content":"burp","important":false}' http://localhost:3001/api/notes
 
-## 1.
+### 1.
 
 React components (like const App = () => <></>) are technically JavaScript functions. They return jsx (looks like html markup, but in fact stuff that is compiled by Babel into js).
 In practice, JSX is much like HTML with the distinction that with JSX you can easily embed dynamic content by writing appropriate JavaScript within curly braces. The idea of JSX is quite similar to many templating languages, such as Thymeleaf used along with Java Spring, which are used on servers.  
@@ -412,7 +415,7 @@ infinite loop: `<button onClick={() => { props.likeBlog(props.blog.id) }}>` rath
 props von React components have to be ({blog})
 export default Togglable for components, not { Togglable }
 
-## 2. check minFetch
+### 2. check minFetch
 
 use ids, not array indices, as keys in rendering lists  
 control the form input with state  
@@ -432,7 +435,7 @@ or use style= within a component, filling with a js object (aka â€˜inline styleâ
 setTimeout(()=>{something}, 0) to defer something until the stack is clear  
  https://www.youtube.com/watch?v=8aGhZQkoFbQ
 
-## 3. check phonebook, check minMongodb
+### 3. check phonebook, check minMongodb
 
 We will be building our backend on top of NodeJS, which is a JavaScript runtime based on Google's Chrome V8 JavaScript engine.  
 Browsers do not yet support all of JavaScript's newest features. Due to this fact, a lot of code run in browsers has been transpiled from a newer version of JavaScript to an older, more compatible version. Today, the most popular way to do transpiling is by using Babel. Transpilation is automatically configured in React applications created with Vite.
@@ -446,7 +449,7 @@ The situation with JavaScript running in the backend is different. The newest ve
 If you're having issues with content.body being undefined for seemingly no reason, make sure you didn't forget to add app.use(express.json()) near the top of the file.  
 note backend: https://github.com/fullstack-hy2020/part3-notes-backend
 
-## 4.
+### 4.
 
 testing js: There are a large number of test libraries, or test runners, available for JavaScript. The old king of test libraries is Mocha, which was replaced a few years ago by Jest. A newcomer to the libraries is Vitest, which bills itself as a new generation of test libraries. Nowadays, Node also has a built-in test library node:test, which is well suited to the needs of the course. https://fullstackopen.com/en/part4/structure_of_backend_application_introduction_to_testing#testing-node-applications  
 testing backend: use supertest to test the API. check minBackendwTests, check blogList
@@ -538,7 +541,7 @@ sequenceDiagram
 
 or server-side session https://fullstackopen.com/en/part4/token_authentication#problems-of-token-based-authentication
 
-## 5. frontend tests with react-testing-library or jest
+### 5. frontend tests with react-testing-library or jest
 
 Also using user-event from i
 jsdom library simulates a web browser  
@@ -599,7 +602,7 @@ Redux is a client-state librariy that can be used to store asynchronous data
 
 context: see context_counter
 
-## 9 Typescript
+### 9 Typescript
 
 https://react-typescript-cheatsheet.netlify.app/docs/basic/setup  
 useful: zod or custom validator to the request body in ts-flight-diary utils.ts  
@@ -620,7 +623,7 @@ try {
   }
 ```
 
-## 11 CI
+### 11 CI
 
 Jenkins: self hosted, separate server for running the tasks in continuous integration  
 github actions with yml file: remember how to share variables between jobs (with outputs), do not forget to check out the code (uses: actions/checkout@v4) and use the tools (for example, - uses: actions/setup-node@v4).  
