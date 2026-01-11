@@ -1,0 +1,167 @@
+need node and an editor (VSCode)
+https://nodejs.org/en/
+
+printf '\33c\e[3J'; 
+
+npm install --save-dev eslint prettier eslint-plugin-prettier eslint-config-prettier
+npx eslint --init
+/Users/thomas/PycharmProjects/Fullstack/k8s-submission/.prettierrc
+/Users/thomas/PycharmProjects/Fullstack/k8s-submission/the_project/eslint.config.js
+
+
+//////////////////////////////// own server ////////////////////////////////
+npm init
+npm install express 
+npm i morgan dotenv mongoose mongodb
+(npm install
+npm update)
+and add "dev": "node --watch index.js", "start": "node index.js", to scripts in package.json
+npm run dev
+
+//////////////////////////////// json server ////////////////////////////////
+npx json-server --port 3001 db.json
+
+or
+
+npm install json-server --save-dev
+and add to scripts in package.json
+	"server": "json-server -p 3001 db.json",
+	or "server": "json-server --watch -p 3003 --routes routes.json src/data/anecdotes.json",	
+then can do simple
+npm run server
+
+//////////////////////////////// mongodb ////////////////////////////////
+npm i dotenv mongodb mongoose
+
+//////////////////////////////// users ////////////////////////////////
+npm install bcrypt (to generate hashes)
+npm install jsonwebtoken
+
+//////////////////////////////// js test ////////////////////////////////
+npm install --save-dev jest @babel/preset-env @babel/preset-react eslint-plugin-jest
+create file .babelrc with
+{
+  "presets": [
+    "@babel/preset-env",
+    ["@babel/preset-react", { "runtime": "automatic" }]
+  ]
+}
+and add to scripts in package.json
+	"test": "jest"
+then in bla.test.js
+import bla from './bla'
+
+describe('bla', () => {
+  test('do this', () => {
+    const state = []
+    const action = {}
+    const newState = bla(state, action)
+
+    expect(newState).toHaveLength(1)
+    expect(newState).toContainEqual(action.payload)
+    expect(newState).toEqual(initialState)
+  })
+})
+
+//////////////////////////////// front end ////////////////////////////////
+npm create vite@latest countries -- --template react
+cd countries
+npm install
+npm install axios
+npm run dev
+if added to backend: add to scripts in package.json
+    	"build:ui": "rm -rf dist && cd ../phonebookFrontend && npm run build && cp -r dist ../phonebookDatabase"
+
+//////////////////////////////// front end tests ////////////////////////////////
+https://fullstackopen.com/en/part5/testing_react_apps
+
+npm install --save-dev vitest jsdom // jsdom simulates a web browser
+npm install --save-dev @testing-library/react @testing-library/jest-dom // to render components
+then add to scripts
+	"test": "vitest run"
+expand vite.config.js with
+export default defineConfig({
+  // ...
+  test: {
+    environment: 'jsdom',
+    globals: true,
+    setupFiles: './testSetup.js', 
+  }
+})
+and create testSetup.js with
+import { afterEach } from 'vitest'
+import { cleanup } from '@testing-library/react'
+import '@testing-library/jest-dom/vitest'
+
+afterEach(() => {
+  cleanup()
+})
+
+//////////////////////////////// e2e tests ////////////////////////////////
+https://fullstackopen.com/en/part5/end_to_end_testing_playwright
+
+npm init playwright@latest
+then add to scripts
+	"test": "playwright test" // handles only natively
+	or "test": "playwright test --project=chromium --project=firefox"
+	and ev. "test:report": "playwright show-report"
+check with npm test that it runs
+
+change playwright.config.js to
+export default defineConfig({
+  // ...
+  timeout: 3000,
+  fullyParallel: false,
+  workers: 1,
+  baseURL: 'http://localhost:5173', // to use relative urls 
+	aka instead await page.post('http://localhost:5173/api/testing/reset'), await page.post('/api/testing/reset')
+  // ...
+})
+IMPORTANT: run backend to be tested in test mode: "start:test": "cross-env NODE_ENV=test node --watch index.js" and frontend npm run dev, ev. add testingRouter to backend
+
+run with npm test 
+find selectors with npm run test -- --ui
+record with npx playwright codegen http://localhost:5173/
+debug with npm test -- -g'one of those can be made nonimportant' --debug
+
+////////////////////typescript monorepo/////////////////////
+npm i --save-dev typescript ts-node eslint typescript-eslint @typescript-eslint/eslint-plugin @typescript-eslint/parser @eslint/js eslint-plugin-react-hooks eslint-plugin-react-refresh prettier eslint-plugin-prettier eslint-config-prettier vite @vitejs/plugin-react ts-node-dev
+
+npm i react react-dom axios express @types/express @types/node @types/react @types/react-dom
+
+eventuell
+npm i react-redux @reduxjs/toolkit react-router-dom zod uuid
+npm i dayjs @emotion/react @emotion/styled @mui/icons-material @mui/joy @mui/material @mui/x-date-pickers
+
+copy .gitignore
+.prettierrc.json
+eslint.config.mjs
+index.html
+package-lock.json
+package.json
+tsconfig_server.json
+tsconfig.app.json
+tsconfig.json
+tsconfig.node.json
+vite.config.ts
+from flight diary or patientor-all -- both local on mac M1 and in repos under
+https://github.com/thomastoumasu/Patientor_fullstack
+https://github.com/thomastoumasu/Fullstack_submission/tree/main/part9/ts-flight-diary-fullstack
+
+put types in shared/types.ts
+frontend in client/
+backend in /server
+check that frontend has relative paths (/api instead of localhost:3001/api)
+check that backend uses dist: app.use(express.static("dist"));
+
+
+
+
+
+
+
+
+
+
+
+
