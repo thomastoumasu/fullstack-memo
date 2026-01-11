@@ -1,3 +1,4 @@
+//////////////////////////// backend ////////////////////
 npm init
 	
 npm install typescript --save-dev
@@ -64,3 +65,7 @@ package.json
     "dev": "ts-node-dev index.ts",
     "lint": "eslint .",
 	"start": "node build/index.js"
+
+
+//////////////////////////// frontend with vite ////////////////////
+npm create vite@latest my-app-name -- --template react-ts
