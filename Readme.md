@@ -215,16 +215,15 @@ fi
 
 ## container
 
-remember bind mount  
+remember idea of bind mount   
 remember structure reverse proxy with nginx (local folder part12-containers-applications from https://fullstackopen.com/en/part12/basics_of_orchestration#communications-between-containers-in-a-more-ambitious-environment and same in local folder container-application-main from https://courses.mooc.fi/org/uh-cs/courses/devops-with-docker/chapter-3/volumes-in-action)  
 <img src="./pics/reverse_proxy.png" alt="nginx reverse proxy" style="height:600px; width:500px;"/>  
+traps:  
 do not forget to run container with -it if want to interact with it (like using sh read)  
 when using -v with a single file be sure it exists in the host, otherwise it will try to create a folder
 
-Dockerfile specifies the image.  
-images includes the code, the dependencies and the instructions how to run the application. Images are immutable.  
-Docker build turns an image into a runtime instance of the image aka a container.  
-use :alpine image to reduce image size, or multistage build  
+Images include the code, the dependencies and the instructions how to run the application. Images are immutable. Dockerfile specifies how to construct the image. Docker build turns an image into a runtime instance of the image aka a container.  
+use :alpine image to reduce image size, or multistage build.  
 .dockerignore specifies files not to be copied into the image.  
 -p : hostport:applicationport so 3010:3000 means 3000 from inside, localhost:3010 from outside  
 when leaving the host port unspecified, Docker will automatically choose a free port.  
@@ -234,7 +233,9 @@ docker-compose.yml to automatize the image build, then run with docker compose u
 docker-compose creates a DNS, container can be accessed from inside (=from other containers) with their image name, like frontend:3000. If port published with -p, from outside (=from the host) with localhost:3010  
 scaling: docker compose up --scale whoami=3 (be sure to leave host port unspecified otherwise conflict)  
 with load balancer: https://courses.mooc.fi/org/uh-cs/courses/devops-with-docker/chapter-3/docker-networking see local container-applications-main/scaling-exercise  
-docker hub: if not specified, the tag :latest simply refers to the most recent image that has been built and pushed  
+  
+image name: registry/organisation/image:tag  (organisation can be an individual). registry will default to Docker hub, organisation to library and tag to latest. latest refers to the most recent image that has been built and pushed.  
+thomastoumasu/k8s-backend:serverless-amd  or just ubuntu   
 build for GKE (default is amd) on M1 (arm):  
 -  export DOCKER_DEFAULT_PLATFORM=linux/amd64 or
 -  docker build --platform linux/amd64 -t imagename . or
@@ -278,7 +279,7 @@ to install SW inside container:
   apt install -y nodejs  
   node usr/src/app/index.js
 - apt update && apt install -y curl
-- apk add --no-cache curl ffmpeg python3 ca-certificates (for alpine images)  
+- [yt_dlp](https://github.com/thomastoumasu/container-applications-main/blob/main/24Defining%20start%20conditions%20for%20the%20container%20-%20MOOC.fi%20courses.pdf) program that downloads YouTube and Imgur videos. Also https://github.com/thomastoumasu/container-applications-main/blob/main/44Optimizing%20the%20image%20size%20-%20MOOC.fi%20courses.pdf
   
 [clean up](https://github.com/thomastoumasu/k8s-submission/blob/cloud/docker_clean.sh)  
 
@@ -345,7 +346,7 @@ A traditional forward proxy server allows multiple clients to route traffic to a
 
 --postgres configuration in https://courses.mooc.fi/org/uh-cs/courses/devops-with-docker/chapter-3/volumes-in-action see [local container-applications-main ](https://github.com/thomastoumasu/container-applications-main/blob/main/Compose26.yaml)  
 
-.dockerignore  
+[.dockerignore](https://github.com/thomastoumasu/part12-containers-applications/blob/main/todo-app/todo-backend/.dockerignore): 
 build  
 dist  
 mongo_data  
@@ -674,4 +675,5 @@ https://www.digitalocean.com/community/tutorials/the-ins-and-outs-of-token-based
 https://medium.com/techtrument/multithreading-javascript-46156179cf9a
 
 https://developer.mozilla.org/en-US/docs/Web/API/Web_Workers_API/Using_web_workers
+
 
