@@ -368,21 +368,16 @@ npm-debug.log
 
 ## javascript
 
-### basics
-
-https://medium.com/@robinviktorsson/setting-up-eslint-and-prettier-for-a-typescript-project-aa2434417b8f  
+### set up
+TS: https://medium.com/@robinviktorsson/setting-up-eslint-and-prettier-for-a-typescript-project-aa2434417b8f  
+JS: https://github.com/thomastoumasu/k8s-submission/blob/main/.prettierrc, https://github.com/thomastoumasu/k8s-application/blob/main/backend/eslint.config.js, https://github.com/thomastoumasu/k8s-application/blob/main/backend/package.json  
+check ./create-node-js-project.txt  
+VSCode:  
 "editor.formatOnPaste": true  
-copy line down command d
+copy line down command d  
 
-javascript: primitive types are copied by value, objects by reference. See blogListBackend blogs.js, blogRouter.post('/')  
-Lodash library for operations on objects
-
-really do not forget e.preventDefault() for form onSubmit  
-really do not forget export default ReactComponent  
-to update an object with setState: setPatient({
-...patient,
-entries: patient.entries.concat(addedEntry),
-});
+### basics
+javascript: primitive types are copied by value, objects by reference.     
 
 .then(  
 .catch(
@@ -394,22 +389,41 @@ await
 
 if (variable) {
 will be false if variable is undefined, like with someArray.find( and not found - so can use it
-
+```js
+const notifyWith = useNotify()
+// can do 
+notifyWith(message)
+// with 
+const useNotify = () => {
+  bla
+  return (message) => {
+    bla
+  };
+};
+```
+so 
+```js
 <button onClick={() => completeTodo(todo.id)}>  
-or onClick={complete(todo.id)} with const completeTodo = id => () => {
+or
+onClick={complete(todo.id)} with const completeTodo = id => () => {
+```
+
+to update an object with setState: 
+```js
+setPatient({
+	...patient,
+	entries: patient.entries.concat(addedEntry),
+});
+```
 
 When separed component: also separate handler in two parts, component sends back something up. See BlogListFrontend_query_routed BlogForm.jsx
 
-const notifyWith = useNotify()  
-notifyWith(message)  
-with const useNotify = () => {  
- bla  
- return (message) => {}  
-}
-
-JSON.parse(loggedUserJSON)
-
-check server.js in -react-query_anecdotes for json-server
+Lodash library for operations on objects  
+check server.js in -react-query_anecdotes for json-server  
+React: check ./snippets.txt  
+really do not forget e.preventDefault() for form onSubmit    
+really do not forget export default ReactComponent  
+JSON.parse(loggedUserJSON)  
 
 install may update the package-lock.json  
 install may install a different version of a dependency if you have ^ or ~ in the version of the dependency.  
@@ -675,5 +689,6 @@ https://www.digitalocean.com/community/tutorials/the-ins-and-outs-of-token-based
 https://medium.com/techtrument/multithreading-javascript-46156179cf9a
 
 https://developer.mozilla.org/en-US/docs/Web/API/Web_Workers_API/Using_web_workers
+
 
 
