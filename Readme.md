@@ -7,7 +7,8 @@ https://www.markdownguide.org/extended-syntax/#highlight
 
 ## Tips and tricks
 
-encrypt a file: https://courses.mooc.fi/org/uh-cs/courses/devops-with-kubernetes/chapter-3/configuring-applications
+encrypt a file: https://courses.mooc.fi/org/uh-cs/courses/devops-with-kubernetes/chapter-3/configuring-applications  
+scan if ports are open in localhost: docker run -it --rm --network host networkstatic/nmap localhost  
 
 ## Kubernetes
 
@@ -228,14 +229,82 @@ use :alpine image to reduce image size, or multistage build
 -p : hostport:applicationport so 3010:3000 means 3000 from inside, localhost:3010 from outside  
 when leaving the host port unspecified, Docker will automatically choose a free port.  
 -p 3456:3000 means 0.0.0.0:3456:3000 aka opening to anyone, better is -p 127.0.0.1:3456:3000 aka opening only to this computer  
--v: use volumes to bind a local file to container (-> develop with IDE like VSCode in container, check docker-compose.dev.yml)  
+-v: use volumes to bind a local file to container (-> develop with IDE like VSCode in container, check docker-compose.dev.yml)    
 docker-compose.yml to automatize the image build, then run with docker compose up  
 docker-compose creates a DNS, container can be accessed from inside (=from other containers) with their image name, like frontend:3000. If port published with -p, from outside (=from the host) with localhost:3010  
 scaling: docker compose up --scale whoami=3 (be sure to leave host port unspecified otherwise conflict)  
 with load balancer: https://courses.mooc.fi/org/uh-cs/courses/devops-with-docker/chapter-3/docker-networking see local container-applications-main/scaling-exercise  
-set user with low permissions COPY --chown=node:node . . and then before CMD: USER node  
-https://medium.com/@lizrice/non-privileged-containers-based-on-the-scratch-image-a80105d6d341
+docker hub: if not specified, the tag :latest simply refers to the most recent image that has been built and pushed  
+build for GKE (default is amd) on M1 (arm):  
+-  export DOCKER_DEFAULT_PLATFORM=linux/amd64 or
+-  docker build --platform linux/amd64 -t imagename . or
+-  FROM --platform=linux/arm64 docker:25-git (Dockerfile) or
+-  with: platforms: linux/amd64,linux/arm64 (compose.yaml)
+Or [multi-arch images](https://www.docker.com/blog/how-to-rapidly-build-multi-architecture-images-with-buildx/): https://github.com/thomastoumasu/k8s-submission/blob/main/create_image.sh  
 
+### docker commands
+```bat
+docker build .
+docker build -t frontend .
+# build image named backend-dev from the dockerfile called dev.Dockerfile which is in this folder:
+docker build -f dev.Dockerfile -t backend-dev .
+# to stop at the build stage
+docker build --target build-stage -t frontend .
+# run a container based on the image frontend
+docker run --rm --name frontend -p 5173:80 frontend
+# run interactively (=open stdin and pseudo TTY), and overwrites CMD with bash (can also add args to overwrite ARG
+docker run --rm -it --name frontend -p 5173:80 frontend bash
+docker run --rm -it --name frontend-dev -p 5173:5173 -v "$(pwd):/usr/src/app/" frontend-dev bash
+  
+# run in background
+docker run -d -it --name looper ubuntu sh -c 'while true; do date; sleep 1; done' # do not forget -it if command reads input from user with read  
+docker logs -f looper
+# open new terminal
+docker attach looper --no-stdin # to exit here, in the attached window, with Ctrl-C, without killing it
+docker attach looper # to exit here, in the attached window, with Ctrl-P Ctrl-Q, without killing it
+  
+# copy file into running container (or from container to host), works also if container has stopped
+docker run -it --name test ubuntu sh
+ touch bla.txt
+docker cp bla.txt test:usr/src/
+```
+to install SW inside container:  
+- apt-get update && apt-get -y install nano  
+   nano /usr/src/app/index.js  
+   console.log('Hello World')  
+   Ctrl-x y Enter  
+  apt-get -y install curl  
+  curl -sL https://deb.nodesource.com/setup_20.x | bash  
+  apt install -y nodejs  
+  node usr/src/app/index.js
+- apt update && apt install -y curl
+- apk add --no-cache curl ffmpeg python3 ca-certificates (for alpine images)  
+  
+[clean up](https://github.com/thomastoumasu/k8s-submission/blob/cloud/docker_clean.sh)  
+
+### Dockerfile 
+ENTRYPOINT ["/usr/local/bin/yt-dlp"]  
+CMD ["https://www.youtube.com/watch?v=Aa55RKWZxxI"] // becomes default argument for yt-dlp  　　
+CMD only implies ENTRYPOINT ["bin/sh -c"]  
+  
+small node images: https://snyk.io/blog/10-best-practices-to-containerize-nodejs-web-applications-with-docker/  
+node:20.9.0-bullseye-slim or node:20-alpine 
+  
+npm ci --omit=dev to not waste time installing development dependencies.    
+cache dependencies:  
+```bat
+FROM node:20
+WORKDIR /usr/src/app
+# Cache the dependency layers
+COPY package*.json ./
+RUN npm install
+COPY . .
+EXPOSE 3000
+CMD ["node", "index.js"]
+```
+set user with low permissions:  
+COPY --chown=node:node . . and then before CMD: USER node  
+(https://medium.com/@lizrice/non-privileged-containers-based-on-the-scratch-image-a80105d6d341)
 ```
 FROM golang:1.16-alpine AS build-stage
 RUN addgroup --system backendgroup && adduser --system backenduser --ingroup backendgroup
@@ -252,103 +321,29 @@ ENV PORT=80
 USER backenduser
 CMD ["./server"]
 ```
-
-### docker commands
-
---build image named backend-dev from the dockerfile called dev.Dockerfile which is in this folder:  
-docker build -f dev.Dockerfile -t backend-dev .
-
-docker build -t frontend .  
-docker build --target build-stage -t frontend . # to stop at the build stage  
-docker run --rm --name frontend -p 5173:80 frontend  
-docker run --rm -it --name frontend -p 5173:80 frontend bash  
-docker run --rm -it --name frontend-dev -p 5173:5173 -v "$(pwd):/usr/src/app/" frontend-dev bash
-
-docker run -d -it --name looper ubuntu sh -c 'while true; do date; sleep 1; done' # do not forget -it if command reads input from user with read  
-docker logs -f looper  
-docker attach looper --no-stdin (to exit here, in the attached window, with Ctrl-C, without killing it)  
-docker attach looper (to exit here, in the attached window, with Ctrl-P Ctrl-Q, without killing it)
-
---copy file into running container (or from container to host), works also if container has stopped
-docker run -it --name test ubuntu sh
-touch bla.txt
-docker cp bla.txt test:usr/src/
-
-ENTRYPOINT ["/usr/local/bin/yt-dlp"]  
-CMD ["https://www.youtube.com/watch?v=Aa55RKWZxxI"] // becomes default argument for yt-dlp 　　
-CMD only implies ENTRYPOINT ["bin/sh -c"]
-
+### Docker compose 
 docker compose -f docker-compose.dev.yml up  
-docker compose -f docker-compose.dev.yml down --volumes # remove volumes
+docker compose -f docker-compose.dev.yml down --volumes # remove volumes  
 --and to rebuild the image:  
-docker compose up --build
+docker compose up --build  
 
-depends_on: ensures that the nginx container is not started before the frontend container app is started (If we do not enforce the starting order with depends_on there is a risk that Nginx fails on startup since it tries to resolve all DNS names that are referred in the config file) (btw, only started, not ready for action)
+depends_on: ensures that the nginx container is not started before the frontend container app is started  
+(If we do not enforce the starting order with depends_on there is a risk that Nginx fails on startup since it tries to resolve all DNS names that are referred in the config file) (btw, only started, not ready for action)  
+  
+--debug DNS:  
+docker exec -it frontend bash 
+  wget http://mongo:27017 -O - or curl http://mongo:27017
 
---debug network:  
-docker exec -it frontend bash then wget http://mongo:27017 -O - or curl http://mongo:27017
-
-```bat
-docker builder prune -f
-docker system prune -f
-docker rm -vf $(docker ps -aq) && docker rmi -f $(docker images -aq)
-docker buildx history rm $(docker buildx history ls)
-docker network prune -f
-```
-
-node:20.9.0-bullseye-slim or node:20-alpine https://snyk.io/blog/10-best-practices-to-containerize-nodejs-web-applications-with-docker/
-npm ci --omit=dev to not waste time installing development dependencies.  
-cache dependencies:
-
-```bat
-FROM ruby:3.1.0
-WORKDIR /usr/src/app
-RUN gem install bundler:2.3.3
-# This will cache the dependency layers if we ever need to make changes to the source code.
-COPY Gemfile* ./
-RUN bundle install
-COPY . .
-RUN rails db:migrate RAILS_ENV=production
-RUN rake assets:precompile
-CMD ["rails", "s", "-e", "production"]
-```
-
-```bat
-FROM node:20
-WORKDIR /usr/src/app
-# Cache the dependency layers
-COPY package*.json ./
-RUN npm install
-COPY . .
-EXPOSE 3000
-CMD ["node", "index.js"]
-```
-
-to install SW inside container:
-
-- apt-get update && apt-get -y install nano  
-   nano /usr/src/app/index.js  
-   console.log('Hello World')  
-   Ctrl-x y Enter  
-  apt-get -y install curl  
-  curl -sL https://deb.nodesource.com/setup_20.x | bash  
-  apt install -y nodejs  
-  node usr/src/app/index.js
-- apt update && apt install -y curl
-- apk add --no-cache curl ffmpeg python3 ca-certificates (for alpine images)
-
-redis for simple key value database: check  
+--redis for simple key value database: check  
 https://github.com/thomastoumasu/k8s-material-example/tree/master/app5 with https://github.com/thomastoumasu/k8s-material-example/blob/master/bin/bash/sc6.sh  
 https://github.com/thomastoumasu/part12-containers-applications/tree/main/todo-app/todo-backend with https://fullstackopen.com/en/part12/building_and_configuring_environments#redis
-
-nginx to serve static content, for reverse proxy (see docker-compose and docker-compose.dev in part12-containers-applications/todo-app) (see also the same in https://courses.mooc.fi/org/uh-cs/courses/devops-with-docker/chapter-3/volumes-in-action, see local container-applications-main)  
+  
+--nginx to serve static content, for reverse proxy (see docker-compose and docker-compose.dev in part12-containers-applications/todo-app) (see also the same in https://courses.mooc.fi/org/uh-cs/courses/devops-with-docker/chapter-3/volumes-in-action, see local container-applications-main)  
 A proxy server, sometimes referred to as a forward proxy, is a server that routes traffic between client(s) and another system, usually external to the network. By doing so, it can regulate traffic according to preset policies, convert and mask client IP addresses, enforce security protocols, and block unknown traffic. Systems with shared networks, such as business organizations or data centers, often use proxy servers. Proxy servers expose a single interface with which clients interact without having to enforce all of the policies and route management logic within the clients themselves.  
 Unlike a traditional proxy server, which is used to protect clients, a reverse proxy is used to protect servers. A reverse proxy is a server that accepts a request from a client, forwards the request to another one of many other servers, and returns the results from the server that actually processed the request to the client as if the proxy server had processed the request itself. The client only communicates directly with the reverse proxy server and it does not know that some other server actually processed its request.  
 A traditional forward proxy server allows multiple clients to route traffic to an external network. For instance, a business may have a proxy that routes and filters employee traffic to the public Internet. A reverse proxy, on the other hand, routes traffic on behalf of multiple servers.  
-scan if ports are open in localhost: docker run -it --rm --network host networkstatic/nmap localhost  
-postgres configuration in https://courses.mooc.fi/org/uh-cs/courses/devops-with-docker/chapter-3/volumes-in-action see [local container-applications-main ](https://github.com/thomastoumasu/container-applications-main/blob/main/Compose26.yaml)
-build for M1: export DOCKER_DEFAULT_PLATFORM=linux/amd64 or docker build --platform linux/amd64 -t imagename . or FROM --platform=linux/arm64 docker:25-git or with: platforms: linux/amd64,linux/arm64  
-docker hub: if not specified, the tag :latest simply refers to the most recent image that has been built and pushed
+
+--postgres configuration in https://courses.mooc.fi/org/uh-cs/courses/devops-with-docker/chapter-3/volumes-in-action see [local container-applications-main ](https://github.com/thomastoumasu/container-applications-main/blob/main/Compose26.yaml)  
 
 .dockerignore  
 build  
@@ -679,3 +674,4 @@ https://www.digitalocean.com/community/tutorials/the-ins-and-outs-of-token-based
 https://medium.com/techtrument/multithreading-javascript-46156179cf9a
 
 https://developer.mozilla.org/en-US/docs/Web/API/Web_Workers_API/Using_web_workers
+
