@@ -8,7 +8,7 @@ https://www.markdownguide.org/extended-syntax/#highlight
 ## Tips and tricks
 
 encrypt a file: https://courses.mooc.fi/org/uh-cs/courses/devops-with-kubernetes/chapter-3/configuring-applications  
-scan if ports are open in localhost: docker run -it --rm --network host networkstatic/nmap localhost  
+scan if ports are open in localhost: docker run -it --rm --network host networkstatic/nmap localhost
 
 ## Kubernetes
 
@@ -139,7 +139,7 @@ ls -la
 mkdir  
 mkdir -p /tmp/kube
 mv old_name new_name
-mv file.txt /targetfolder
+mv file.txt /targetfolder  
 rm -rf cache common controller go.mod go.sum pgconnection router to remove multiple files and folders  
 touch to create text file  
 cat, or head -n 10, or tail -n 10, to show contents of file  
@@ -147,7 +147,7 @@ du -hcs /dev for size of folder
 to pipe into a file: > recreates, >> adds. curl url > text.txt  
 && to chain commands (second will not be executed if first fails)
 sh to execute from file  
-#!/bin/sh or bash; chmod +x script.sh ; mv script.sh script; export PATH=$PATH:$(pwd) or put the script in /usr/local/bin  
+`#!/bin/sh or bash; chmod +x script.sh ; mv script.sh script; export PATH=$PATH:$(pwd)` or put the script in /usr/local/bin  
 to save the script input:  
 script -r bla.txt  
 exit  
@@ -215,7 +215,7 @@ fi
 
 ## container
 
-remember idea of bind mount   
+remember idea of bind mount  
 remember structure reverse proxy with nginx (local folder part12-containers-applications from https://fullstackopen.com/en/part12/basics_of_orchestration#communications-between-containers-in-a-more-ambitious-environment and same in local folder container-application-main from https://courses.mooc.fi/org/uh-cs/courses/devops-with-docker/chapter-3/volumes-in-action)  
 <img src="./pics/reverse_proxy.png" alt="nginx reverse proxy" style="height:600px; width:500px;"/>  
 traps:  
@@ -228,22 +228,24 @@ use :alpine image to reduce image size, or multistage build.
 -p : hostport:applicationport so 3010:3000 means 3000 from inside, localhost:3010 from outside  
 when leaving the host port unspecified, Docker will automatically choose a free port.  
 -p 3456:3000 means 0.0.0.0:3456:3000 aka opening to anyone, better is -p 127.0.0.1:3456:3000 aka opening only to this computer  
--v: use volumes to bind a local file to container (-> develop with IDE like VSCode in container, check docker-compose.dev.yml)    
+-v: use volumes to bind a local file to container (-> develop with IDE like VSCode in container, check docker-compose.dev.yml)  
 docker-compose.yml to automatize the image build, then run with docker compose up  
 docker-compose creates a DNS, container can be accessed from inside (=from other containers) with their image name, like frontend:3000. If port published with -p, from outside (=from the host) with localhost:3010  
 scaling: docker compose up --scale whoami=3 (be sure to leave host port unspecified otherwise conflict)  
-with load balancer: https://courses.mooc.fi/org/uh-cs/courses/devops-with-docker/chapter-3/docker-networking see local container-applications-main/scaling-exercise  
-  
-image name: registry/organisation/image:tag  (organisation can be an individual). registry will default to Docker hub, organisation to library and tag to latest. latest refers to the most recent image that has been built and pushed.  
-thomastoumasu/k8s-backend:serverless-amd  or just ubuntu   
-build for GKE (default is amd) on M1 (arm):  
--  export DOCKER_DEFAULT_PLATFORM=linux/amd64 or
--  docker build --platform linux/amd64 -t imagename . or
--  FROM --platform=linux/arm64 docker:25-git (Dockerfile) or
--  with: platforms: linux/amd64,linux/arm64 (compose.yaml)
-Or [multi-arch images](https://www.docker.com/blog/how-to-rapidly-build-multi-architecture-images-with-buildx/): https://github.com/thomastoumasu/k8s-submission/blob/main/create_image.sh  
+with load balancer: https://courses.mooc.fi/org/uh-cs/courses/devops-with-docker/chapter-3/docker-networking see local container-applications-main/scaling-exercise
+
+image name: registry/organisation/image:tag (organisation can be an individual). registry will default to Docker hub, organisation to library and tag to latest. latest refers to the most recent image that has been built and pushed.  
+thomastoumasu/k8s-backend:serverless-amd or just ubuntu  
+build for GKE (default is amd) on M1 (arm):
+
+- export DOCKER_DEFAULT_PLATFORM=linux/amd64 or
+- docker build --platform linux/amd64 -t imagename . or
+- FROM --platform=linux/arm64 docker:25-git (Dockerfile) or
+- with: platforms: linux/amd64,linux/arm64 (compose.yaml)
+  Or [multi-arch images](https://www.docker.com/blog/how-to-rapidly-build-multi-architecture-images-with-buildx/): https://github.com/thomastoumasu/k8s-submission/blob/main/create_image.sh
 
 ### docker commands
+
 ```bat
 docker build .
 docker build -t frontend .
@@ -256,20 +258,22 @@ docker run --rm --name frontend -p 5173:80 frontend
 # run interactively (=open stdin and pseudo TTY), and overwrites CMD with bash (can also add args to overwrite ARG
 docker run --rm -it --name frontend -p 5173:80 frontend bash
 docker run --rm -it --name frontend-dev -p 5173:5173 -v "$(pwd):/usr/src/app/" frontend-dev bash
-  
+
 # run in background
-docker run -d -it --name looper ubuntu sh -c 'while true; do date; sleep 1; done' # do not forget -it if command reads input from user with read  
+docker run -d -it --name looper ubuntu sh -c 'while true; do date; sleep 1; done' # do not forget -it if command reads input from user with read
 docker logs -f looper
 # open new terminal
 docker attach looper --no-stdin # to exit here, in the attached window, with Ctrl-C, without killing it
 docker attach looper # to exit here, in the attached window, with Ctrl-P Ctrl-Q, without killing it
-  
+
 # copy file into running container (or from container to host), works also if container has stopped
 docker run -it --name test ubuntu sh
  touch bla.txt
 docker cp bla.txt test:usr/src/
 ```
-to install SW inside container:  
+
+to install SW inside container:
+
 - apt-get update && apt-get -y install nano  
    nano /usr/src/app/index.js  
    console.log('Hello World')  
@@ -280,19 +284,21 @@ to install SW inside container:
   node usr/src/app/index.js
 - apt update && apt install -y curl
 - [yt_dlp](https://github.com/thomastoumasu/container-applications-main/blob/main/24Defining%20start%20conditions%20for%20the%20container%20-%20MOOC.fi%20courses.pdf) program that downloads YouTube and Imgur videos. Also https://github.com/thomastoumasu/container-applications-main/blob/main/44Optimizing%20the%20image%20size%20-%20MOOC.fi%20courses.pdf
-  
-[clean up](https://github.com/thomastoumasu/k8s-submission/blob/cloud/docker_clean.sh)  
 
-### Dockerfile 
+[clean up](https://github.com/thomastoumasu/k8s-submission/blob/cloud/docker_clean.sh)
+
+### Dockerfile
+
 ENTRYPOINT ["/usr/local/bin/yt-dlp"]  
-CMD ["https://www.youtube.com/watch?v=Aa55RKWZxxI"] // becomes default argument for yt-dlp  　　
-CMD only implies ENTRYPOINT ["bin/sh -c"]  
-  
+CMD ["https://www.youtube.com/watch?v=Aa55RKWZxxI"] // becomes default argument for yt-dlp 　　
+CMD only implies ENTRYPOINT ["bin/sh -c"]
+
 small node images: https://snyk.io/blog/10-best-practices-to-containerize-nodejs-web-applications-with-docker/  
-node:20.9.0-bullseye-slim or node:20-alpine 
-  
-npm ci --omit=dev to not waste time installing development dependencies.    
-cache dependencies:  
+node:20.9.0-bullseye-slim or node:20-alpine
+
+npm ci --omit=dev to not waste time installing development dependencies.  
+cache dependencies:
+
 ```bat
 FROM node:20
 WORKDIR /usr/src/app
@@ -303,9 +309,11 @@ COPY . .
 EXPOSE 3000
 CMD ["node", "index.js"]
 ```
+
 set user with low permissions:  
 COPY --chown=node:node . . and then before CMD: USER node  
 (https://medium.com/@lizrice/non-privileged-containers-based-on-the-scratch-image-a80105d6d341)
+
 ```
 FROM golang:1.16-alpine AS build-stage
 RUN addgroup --system backendgroup && adduser --system backenduser --ingroup backendgroup
@@ -322,31 +330,33 @@ ENV PORT=80
 USER backenduser
 CMD ["./server"]
 ```
-### Docker compose 
+
+### Docker compose
+
 docker compose -f docker-compose.dev.yml up  
 docker compose -f docker-compose.dev.yml down --volumes # remove volumes  
 --and to rebuild the image:  
-docker compose up --build  
+docker compose up --build
 
 depends_on: ensures that the nginx container is not started before the frontend container app is started  
-(If we do not enforce the starting order with depends_on there is a risk that Nginx fails on startup since it tries to resolve all DNS names that are referred in the config file) (btw, only started, not ready for action)  
-  
+(If we do not enforce the starting order with depends_on there is a risk that Nginx fails on startup since it tries to resolve all DNS names that are referred in the config file) (btw, only started, not ready for action)
+
 --debug DNS:  
-docker exec -it frontend bash 
-  wget http://mongo:27017 -O - or curl http://mongo:27017
+docker exec -it frontend bash
+wget http://mongo:27017 -O - or curl http://mongo:27017
 
 --redis for simple key value database: check  
 https://github.com/thomastoumasu/k8s-material-example/tree/master/app5 with https://github.com/thomastoumasu/k8s-material-example/blob/master/bin/bash/sc6.sh  
 https://github.com/thomastoumasu/part12-containers-applications/tree/main/todo-app/todo-backend with https://fullstackopen.com/en/part12/building_and_configuring_environments#redis
-  
+
 --nginx to serve static content, for reverse proxy (see docker-compose and docker-compose.dev in part12-containers-applications/todo-app) (see also the same in https://courses.mooc.fi/org/uh-cs/courses/devops-with-docker/chapter-3/volumes-in-action, see local container-applications-main)  
 A proxy server, sometimes referred to as a forward proxy, is a server that routes traffic between client(s) and another system, usually external to the network. By doing so, it can regulate traffic according to preset policies, convert and mask client IP addresses, enforce security protocols, and block unknown traffic. Systems with shared networks, such as business organizations or data centers, often use proxy servers. Proxy servers expose a single interface with which clients interact without having to enforce all of the policies and route management logic within the clients themselves.  
 Unlike a traditional proxy server, which is used to protect clients, a reverse proxy is used to protect servers. A reverse proxy is a server that accepts a request from a client, forwards the request to another one of many other servers, and returns the results from the server that actually processed the request to the client as if the proxy server had processed the request itself. The client only communicates directly with the reverse proxy server and it does not know that some other server actually processed its request.  
-A traditional forward proxy server allows multiple clients to route traffic to an external network. For instance, a business may have a proxy that routes and filters employee traffic to the public Internet. A reverse proxy, on the other hand, routes traffic on behalf of multiple servers.  
+A traditional forward proxy server allows multiple clients to route traffic to an external network. For instance, a business may have a proxy that routes and filters employee traffic to the public Internet. A reverse proxy, on the other hand, routes traffic on behalf of multiple servers.
 
---postgres configuration in https://courses.mooc.fi/org/uh-cs/courses/devops-with-docker/chapter-3/volumes-in-action see [local container-applications-main ](https://github.com/thomastoumasu/container-applications-main/blob/main/Compose26.yaml)  
+--postgres configuration in https://courses.mooc.fi/org/uh-cs/courses/devops-with-docker/chapter-3/volumes-in-action see [local container-applications-main ](https://github.com/thomastoumasu/container-applications-main/blob/main/Compose26.yaml)
 
-[.dockerignore](https://github.com/thomastoumasu/part12-containers-applications/blob/main/todo-app/todo-backend/.dockerignore): 
+[.dockerignore](https://github.com/thomastoumasu/part12-containers-applications/blob/main/todo-app/todo-backend/.dockerignore):
 build  
 dist  
 mongo_data  
@@ -369,15 +379,17 @@ npm-debug.log
 ## javascript
 
 ### set up
+
 TS: https://medium.com/@robinviktorsson/setting-up-eslint-and-prettier-for-a-typescript-project-aa2434417b8f  
 JS: https://github.com/thomastoumasu/k8s-submission/blob/main/.prettierrc, https://github.com/thomastoumasu/k8s-application/blob/main/backend/eslint.config.js, https://github.com/thomastoumasu/k8s-application/blob/main/backend/package.json  
 check ./create-node-js-project.txt  
 VSCode:  
 "editor.formatOnPaste": true  
-copy line down command d  
+copy line down command d
 
 ### basics
-javascript: primitive types are copied by value, objects by reference.     
+
+javascript: primitive types are copied by value, objects by reference.
 
 .then(  
 .catch(
@@ -389,30 +401,34 @@ await
 
 if (variable) {
 will be false if variable is undefined, like with someArray.find( and not found - so can use it
+
 ```js
-const notifyWith = useNotify()
-// can do 
-notifyWith(message)
-// with 
+const notifyWith = useNotify();
+// can do
+notifyWith(message);
+// with
 const useNotify = () => {
-  bla
+  bla;
   return (message) => {
-    bla
+    bla;
   };
 };
 ```
-so 
+
+so
+
 ```js
-<button onClick={() => completeTodo(todo.id)}>  
+<button onClick={() => completeTodo(todo.id)}>
 or
 onClick={complete(todo.id)} with const completeTodo = id => () => {
 ```
 
-to update an object with setState: 
+to update an object with setState:
+
 ```js
 setPatient({
-	...patient,
-	entries: patient.entries.concat(addedEntry),
+  ...patient,
+  entries: patient.entries.concat(addedEntry),
 });
 ```
 
@@ -421,9 +437,9 @@ When separed component: also separate handler in two parts, component sends back
 Lodash library for operations on objects  
 check server.js in -react-query_anecdotes for json-server  
 React: check ./snippets.txt  
-really do not forget e.preventDefault() for form onSubmit    
+really do not forget e.preventDefault() for form onSubmit  
 really do not forget export default ReactComponent  
-JSON.parse(loggedUserJSON)  
+JSON.parse(loggedUserJSON)
 
 install may update the package-lock.json  
 install may install a different version of a dependency if you have ^ or ~ in the version of the dependency.  
@@ -689,6 +705,3 @@ https://www.digitalocean.com/community/tutorials/the-ins-and-outs-of-token-based
 https://medium.com/techtrument/multithreading-javascript-46156179cf9a
 
 https://developer.mozilla.org/en-US/docs/Web/API/Web_Workers_API/Using_web_workers
-
-
-
