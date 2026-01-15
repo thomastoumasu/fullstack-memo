@@ -432,11 +432,18 @@ setPatient({
 });
 ```
 
+```js
+.sort((a, b) => b.votes - a.votes)
+[...anecdotes].sort((a, b) => b.votes - a.votes)  // if the original array is immutable: make a copy of it
+```
+
+[reduce](https://github.com/thomastoumasu/node-templates/blob/main/snippets/highorderfunctions.js)
+
 When separed component: also separate handler in two parts, component sends back something up. See BlogListFrontend_query_routed BlogForm.jsx
 
 Lodash library for operations on objects  
 check server.js in -react-query_anecdotes for json-server  
-React: check ./snippets.txt  
+React: [check](https://github.com/thomastoumasu/node-templates/blob/main/snippets/snippets.js)  
 really do not forget e.preventDefault() for form onSubmit  
 really do not forget export default ReactComponent  
 JSON.parse(loggedUserJSON)
