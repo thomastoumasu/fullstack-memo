@@ -100,6 +100,19 @@ kubectl apply -f ./manifests/busybox.yaml
 kubectl exec -it my-busybox -- nslookup postgres-svc
 ```
 
+Usecase:
+
+- one backend container stateless (with db link) serving dist frontend -> serverless on GCR
+- containerized backend, db (or only db link in backend), nginx served frontend, nginx reverse proxy, optional lb, scaled with compose -> VM on GCCE
+- k8s -> GKE
+
+How do you architect for continuous delivery: microservices. Then get
+
+- more options to scale up,
+- independent deployability (reduce size/impact of release, can feel safe when making a change) with 0-downtime and less coordination needed between teams,
+- can better isolate data (privacy rights: can know where the data is, can delete it),
+- limit blast radius of failure
+
 ## shell
 
 https://regex101.com/  
@@ -665,7 +678,8 @@ context: see context_counter
 https://react-typescript-cheatsheet.netlify.app/docs/basic/setup  
 useful: zod or custom validator to the request body in ts-flight-diary utils.ts  
 type function interface, not necessarily within function  
-do not forget to import express, { Request, Response, NextFunction } from "express";
+do not forget to import express, { Request, Response, NextFunction } from "express";  
+[see](https://github.com/thomastoumasu/Fullstack_submission/tree/main/part9) and full app [Patientor](https://github.com/thomastoumasu/Patientor_fullstack)
 
 ```
 try {
@@ -688,6 +702,8 @@ github actions with yml file: remember how to share variables between jobs (with
 Example pipeline in Patientor_fullstack, also https://github.com/thomastoumasu/container-applications-main/tree/main/.github/workflows
 
 ## toRead
+
+What part of the db does the new service use? Use different schemas? Split database? Db chapter in Sam Newman Monolith to Microservices
 
 kube net https://speakerdeck.com/thockin
 
